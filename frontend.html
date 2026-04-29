@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>INFS 202 Test Frontend</title>
+</head>
+<body>
+
+<h2>Register</h2>
+<input id="regUser" placeholder="username">
+<input id="regPass" type="password" placeholder="password">
+<button onclick="register()">Register</button>
+
+<h2>Login</h2>
+<button onclick="login()">Login</button>
+
+<h2>Create Post</h2>
+<input id="title" placeholder="title">
+<input id="content" placeholder="content">
+<button onclick="createPost()">Create Post</button>
+
+<h2>Output</h2>
+<pre id="output"></pre>
+
+<script>
+const API = "http://localhost:5000";
+let token = "";
+
+/* REGISTER */
+async function register() {
+  const res = await fetch(`${API}/register`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: document.getElementById("regUser").value,
+      password: document.getElementById("regPass").value
+    })
+  });
+
+  document.getElementById("output").textContent = await res.text();
+}
+
+/* LOGIN */
+async function login() {
+  const res = await fetch(`${API}/login`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: document.getElementById("regUser").value,
+      password: document.getElementById("regPass").value
+    })
+  });
+
+  const data = await res.json();
+  token = data.token;
+
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
+
+/* CREATE POST */
+async function createPost() {
+  const res = await fetch(`${API}/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      title: document.getElementById("title").value,
+      content: document.getElementById("content").value
+    })
+  });
+
+  document.getElementById("output").textContent = await res.text();
+}
+</script>
+
+</body>
+</html>
